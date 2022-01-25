@@ -841,12 +841,14 @@ components:
           description: Link to tag in Echo
           example: https://echo.equinor.com/tag/313-AA-243
         inspectionTypes:
-          type: string
-          description: Valid inspection types
-          enum:
-            - thermal_image
-            - image
-            - audio
+          type: array
+          items:
+            type: string
+            description: Valid inspection types
+            enum:
+              - thermal_image
+              - image
+              - audio
       additionalProperties: false
     ReportEntry:
       type: object
