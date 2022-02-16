@@ -1,0 +1,287 @@
+asyncapi: 2.3.0
+info:
+  title: Flotilla MQTT API
+  version: 1.0.0
+  description: >-
+    Flotilla MQTT API is a message broker for producers and conumers of real
+    time data about robots and missions on a facility.
+  license:
+    name: EPL 2.0
+    url: https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.html
+servers:
+  development:
+    url: localhost:{port}
+    protocol: mqtt
+    description: Development broker
+    variables:
+      port:
+        default: '1883'
+        enum:
+          - '1883'
+    security:
+      - user-password: []
+defaultContentType: application/json
+channels:
+  isar/{robot_id}/state:
+    description: >-
+      The topic on which information about the state of the ISAR State Machine
+      for a robot may be produced and consumed.
+    parameters:
+      robot_id:
+        $ref: '#/components/parameters/robotId'
+    publish:
+      summary: >-
+        Inform about the current state of the ISAR state machine for the given
+        robot.
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/isarState'
+    subscribe:
+      summary: >-
+        Get information about the current state of the ISAR state machine for
+        the given robot.
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/isarState'
+  isar/{robot_id}/mission:
+    description: >-
+      The topic on which information about the status of ongoing missions for
+      ISAR instances may be produced and consumed.
+    parameters:
+      robot_id:
+        $ref: '#/components/parameters/robotId'
+    publish:
+      summary: Inform about the current progress of the scheduled mission
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/isarMission'
+    subscribe:
+      summary: Get information about the current progress of the scheduled mission
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/isarMission'
+  telemetry/{robot_id}/pose:
+    description: >-
+      The topic on which information about the pose of a robot may be produced
+      or consumed.
+    parameters:
+      robot_id:
+        $ref: '#/components/parameters/robotId'
+    publish:
+      summary: Inform about the current pose of the robot
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/telemetryPose'
+    subscribe:
+      summary: Get information about the current pose of the robot
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/telemetryPose'
+  telemetry/{robot_id}/battery:
+    description: >-
+      The topic on which information about the current battery level of a robot
+      may be produced or consumed.
+    parameters:
+      robot_id:
+        $ref: '#/components/parameters/robotId'
+    publish:
+      summary: Inform about the current battery level of the robot.
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/telemetryBattery'
+    subscribe:
+      summary: Get information about the current battery level of the robot.
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/telemetryBattery'
+  telemetry/{robot_id}/pressure:
+    description: >-
+      The topic on which information about the ATEX overpressure for a robot may
+      be produced or consumed.
+    parameters:
+      robot_id:
+        $ref: '#/components/parameters/robotId'
+    publish:
+      summary: Inform about the current ATEX overpressure level of the robot.
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/telemetryPressure'
+    subscribe:
+      summary: Get information about the current ATEX overpressure level of the robot.
+      traits:
+        - $ref: '#/components/operationTraits/mqtt'
+      message:
+        $ref: '#/components/messages/telemetryPressure'
+components:
+  messages:
+    isarState:
+      name: isarState
+      title: Isar State
+      summary: State of the ISAR state machine.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/isarStatePayload'
+    isarMission:
+      name: isarMission
+      title: Isar Mission
+      summary: Status of the current mission.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/isarMissionPayload'
+    telemetryPose:
+      name: telemetryPose
+      title: Telemetry Pose
+      summary: Pose of the robot
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/telemetryPosePayload'
+    telemetryBattery:
+      name: telemetryBattery
+      title: Telemetry Battery
+      summary: Battery level of the robot
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/telemetryBatteryPayload'
+    telemetryPressure:
+      name: telemetryPressure
+      title: Telemetry Pressure
+      summary: ATEX overpressure of the robot
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/telemetryPressurePayload'
+  schemas:
+    isarStatePayload:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/isarState'
+        timestamp:
+          $ref: '#/components/schemas/timestamp'
+    isarMissionPayload:
+      type: object
+      properties:
+        id:
+          type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/isarTask'
+        timestamp:
+          $ref: '#/components/schemas/timestamp'
+    telemetryPosePayload:
+      type: object
+      properties:
+        pose:
+          $ref: '#/components/schemas/telemetryPose'
+        timestamp:
+          $ref: '#/components/schemas/timestamp'
+    telemetryBatteryPayload:
+      properties:
+        battery:
+          $ref: '#/components/schemas/telemetryBattery'
+        timestamp:
+          $ref: '#/components/schemas/timestamp'
+    telemetryPressurePayload:
+      properties:
+        pressure:
+          $ref: '#/components/schemas/telemetryPressure'
+        timestamp:
+          $ref: '#/components/schemas/timestamp'
+    isarState:
+      type: string
+      description: State of the ISAR state machine
+      enum:
+        - off
+        - idle
+        - send
+        - monitor
+        - finalize
+    isarTask:
+      type: object
+      description: A task that needs to be completed as a part of a mission.
+      properties:
+        id:
+          type: string
+          description: Id of the task
+        task_type:
+          type: string
+          description: The type of task
+          enum:
+            - drive_to_pose
+            - take_image
+            - take_thermal_image
+        status:
+          $ref: '#/components/schemas/isarTaskStatus'
+    isarTaskStatus:
+      type: string
+      description: Status of task in a mission
+      enum:
+        - not_started
+        - completed
+        - scheduled
+        - in_progress
+        - failed
+        - error_unexpected
+    telemetryPose:
+      type: object
+      description: The position and orientation of a robot in the asset frame.
+      properties:
+        x:
+          type: number
+          format: float
+          description: X-position of robot
+        'y':
+          type: number
+          format: float
+          description: Y-position of robot
+        z:
+          type: number
+          format: float
+          description: Z-position of robot
+        yaw:
+          type: number
+          format: float
+          description: Yaw-angle of robot
+        pitch:
+          type: number
+          format: float
+          description: Pitch-angle of robot
+        roll:
+          type: number
+          format: float
+          description: Roll-angle of robot
+    telemetryBattery:
+      type: integer
+      description: The battery level of the robot in the range 0-100
+      minimum: 0
+      maximum: 100
+    telemetryPressure:
+      type: number
+      format: float
+      description: The atex overpressure messured in mBar
+    timestamp:
+      type: string
+      format: date-time
+      description: Date and time when the message was sent.
+  securitySchemes:
+    user-password:
+      type: userPassword
+  parameters:
+    robotId:
+      description: The ID of the robot.
+      schema:
+        type: string
+  operationTraits:
+    mqtt:
+      bindings:
+        mqtt:
+          qos: 1
