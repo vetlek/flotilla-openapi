@@ -219,112 +219,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProblemDetails"
-  /robots/{robot_id}/event:
-    post:
-      operationId: postRobotEvent
-      summary: Create new event for robot
-      description: "### Overview
-
-        Adds a new event to the robot schedule
-
-
-        New entries to the schedule can be added as long as they do not conflict with
-        already scheduled events.
-
-        "
-      tags:
-        - Robots
-      security:
-        - OAuth2:
-            - write
-      parameters:
-        - in: path
-          name: robot_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 21
-      requestBody:
-        description: Time entry update
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/EventRequest"
-            examples:
-              scheduleEvent:
-                $ref: "#/components/examples/scheduleEvent"
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EventResponse"
-          description: Request successful
-        "403":
-          description: Forbidden - Client not authorized to add events
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
-  /robots/{robot_id}/event/{event_id}:
-    delete:
-      operationId: deleteRobotEvent
-      summary: Remove an event from the robot schedule
-      description: "### Overview
-
-        Deletes an event from the robot schedule.
-
-
-        Can only be used for events that have not started yet.
-
-        "
-      tags:
-        - Robots
-      security:
-        - OAuth2:
-            - write
-      parameters:
-        - in: path
-          name: robot_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 21
-        - in: path
-          name: event_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 102
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PostResponse"
-          description: Request successful
-        "403":
-          description: Forbidden - Client not authorized to delete events
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+ 
   /robots/{robot_id}/start/{mission_id}:
     post:
       operationId: postStartRobot
@@ -485,6 +380,172 @@ paths:
           description: Request successful
         "404":
           description: Not found - The requested mission object does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+  /events:
+    get:
+      operationId: getEvent
+      summary: Lookup events
+      description: "### Overview
+
+        Lookup events
+
+        "
+      tags:
+        - Events
+      security:
+        - OAuth2:
+            - write
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+          description: Request successful
+        "403":
+          description: Forbidden - Client not authorized to add events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+    post:
+      operationId: postRobot
+      summary: Create new event
+      description: "### Overview
+
+        Adds a new event to the robot schedule
+
+
+        New entries to the schedule can be added as long as they do not conflict with
+        already scheduled events.
+
+        "
+      tags:
+        - Events
+      security:
+        - OAuth2:
+            - write
+      requestBody:
+        description: Time entry update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventRequest"
+            examples:
+              scheduleEvent:
+                $ref: "#/components/examples/scheduleEvent"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventResponse"
+          description: Request successful
+        "403":
+          description: Forbidden - Client not authorized to add events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+  /events/{event_id}:
+    delete:
+      operationId: getEventById
+      summary: Remove a specified event
+      description: "### Overview
+
+        Deletes an event from the robot schedule.
+
+
+        Can only be used for events that have not started yet.
+
+        "
+      tags:
+        - Events
+      security:
+        - OAuth2:
+            - write
+      parameters:
+        - in: path
+          name: event_id
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 21
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostResponse"
+          description: Request successful
+        "403":
+          description: Forbidden - Client not authorized to delete events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+    get:
+      operationId: getEventById
+      summary: Lookup event with specified id
+      description: "### Overview
+
+        Lookup event with specified id.
+
+
+        Can only be used for events that have not started yet.
+
+        "
+      tags:
+        - Events
+      security:
+        - OAuth2:
+            - write
+      parameters:
+        - in: path
+          name: event_id
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 102
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostResponse"
+          description: Request successful
+        "403":
+          description: Forbidden - Client not authorized to delete events
           content:
             application/json:
               schema:
@@ -1014,6 +1075,11 @@ components:
           description: Series id if the schedule entry is a part of a series
           example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
           nullable: true
+        robotId:
+          type: integer
+          format: int32
+          description: Id of robot
+          example: 231
         missionId:
           type: integer
           format: int32
@@ -1063,9 +1129,15 @@ components:
     EventRequest:
       type: object
       required:
+        - robotId
         - missionId
         - startTime
       properties:
+        robotId:
+          type: string
+          format: uuid
+          description: Id of robot
+          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
         missionId:
           type: string
           format: uuid
@@ -1113,8 +1185,9 @@ components:
     scheduleEvent:
       summary: Add new event to robot schedule
       value:
-        - missionId: 287
-          startTime: "2022-01-12T10:33:33Z"
+        robotId: 1
+        missionId: 287
+        startTime: "2022-01-12T10:33:33Z"
     start:
       summary: Start mission
       value: {}
