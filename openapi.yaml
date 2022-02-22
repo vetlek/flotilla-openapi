@@ -26,6 +26,11 @@ tags:
       on asset
 
       "
+  - name: Events
+    description:
+      "Events represent all events on asset
+
+      "
   - name: Reports
     description:
       "Reports represent the history of completed and active missions on
