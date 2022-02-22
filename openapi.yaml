@@ -471,7 +471,7 @@ paths:
                 $ref: "#/components/schemas/ProblemDetails"
   /events/{event_id}:
     delete:
-      operationId: getEventById
+      operationId: deleteEventById
       summary: Remove a specified event
       description: "### Overview
 
