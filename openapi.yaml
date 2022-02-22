@@ -76,11 +76,11 @@ paths:
                 $ref: "#/components/schemas/ProblemDetails"
   /robots/{robot_id}:
     get:
-      operationId: getSingleRobot
-      summary: Lookup a single robot
+      operationId: getRobotById
+      summary: Lookup robot by specified id.
       description: "### Overview
 
-        Lookup a single robot.
+        Lookup robot by specified id.
 
         "
       tags:
@@ -351,11 +351,11 @@ paths:
                 $ref: "#/components/schemas/ProblemDetails"
   /missions/{mission_id}:
     get:
-      operationId: getSingleMission
-      summary: Lookup a single mission on the asset
+      operationId: getMissionById
+      summary: Lookup mission by specified id
       description: "### Overview
 
-        Lookup a single mission on the asset
+        Lookup mission by specified id
 
         "
       tags:
@@ -689,11 +689,11 @@ paths:
                 $ref: "#/components/schemas/ProblemDetails"
   /reports/{report_id}:
     get:
-      operationId: getSingleReport
-      summary: Lookup single report
+      operationId: getReportById
+      summary: Lookup report by id
       description: "### Overview
 
-        Lookup a single report with given id
+        Lookup report by id
 
         "
       tags:
