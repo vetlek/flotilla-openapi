@@ -414,7 +414,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EventResponse"
+                $ref: "#/components/schemas/Event"
           description: Request successful
         "403":
           description: Forbidden - Client not authorized to add events
@@ -504,7 +504,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostResponse"
+                $ref: "#/components/schemas/DeleteResponse"
           description: Request successful
         "403":
           description: Forbidden - Client not authorized to delete events
@@ -547,7 +547,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostResponse"
+                $ref: "#/components/schemas/Event"
           description: Request successful
         "403":
           description: Forbidden - Client not authorized to delete events
@@ -1171,6 +1171,13 @@ components:
           description: Id of created event
           example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
       additionalProperties: false
+    DeleteResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - success
     StartResponse:
       type: object
       required:
