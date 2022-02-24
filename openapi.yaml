@@ -763,10 +763,10 @@ components:
         - capabilities
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
           description: Id of robot
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          example: 1
         name:
           type: string
           description: Name of robot
@@ -831,10 +831,10 @@ components:
         - entries
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
           description: Id of report
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          example: 1
         startTime:
           type: string
           format: date-time
@@ -847,10 +847,10 @@ components:
           example: "2022-01-12T10:33:33Z"
           nullable: true
         robotId:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
           description: Id of robot performing mission
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          example: 1
         missionId:
           type: integer
           format: int32
@@ -876,10 +876,10 @@ components:
         - coordinates
       properties:
         id:
-          type: string
-          format: uuid
-          description: Id of map\
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          type: integer
+          format: int32
+          description: Id of map
+          example: 1
         data:
           type: string
           format: byte
@@ -922,10 +922,10 @@ components:
         - time
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
           description: Id of report entry
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          example: 1
         tagId:
           type: string
           description: Tag Id of inspection
@@ -1038,10 +1038,10 @@ components:
         - events
       properties:
         robotId:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
           description: Robot id for schedule
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          example: 1
         startDate:
           type: string
           format: date
@@ -1067,10 +1067,10 @@ components:
         - endTime
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
           description: Id of event
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          example: 1
         seriesId:
           type: string
           format: uuid
@@ -1136,15 +1136,15 @@ components:
         - startTime
       properties:
         robotId:
-          type: string
-          format: uuid
+          type: integer
+          format: int32
           description: Id of robot
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          example: 1
         missionId:
-          type: string
-          format: uuid
-          description: Id of mission
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          type: integer
+          format: int32
+          description: Id of echo mission
+          example: 1
         startTime:
           type: string
           format: date-time
@@ -1162,10 +1162,10 @@ components:
           enum:
             - success
         reportId:
-          type: string
-          format: uuid
-          description: Id of created event
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
+          type: integer
+          format: int32
+          description: Id of created report
+          example: 1
       additionalProperties: false
   examples:
     scheduleEvent:
