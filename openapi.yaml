@@ -456,11 +456,11 @@ paths:
               scheduleEvent:
                 $ref: "#/components/examples/scheduleEvent"
       responses:
-        "200":
+        "201":
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EventResponse"
+                $ref: "#/components/schemas/Event"
           description: Request successful
         "403":
           description: Forbidden - Client not authorized to add events
@@ -500,12 +500,8 @@ paths:
             format: int32
             example: 21
       responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DeleteResponse"
-          description: Request successful
+        "204":
+          description: Event successfully deleted
         "403":
           description: Forbidden - Client not authorized to delete events
           content:
@@ -1155,29 +1151,6 @@ components:
           description: Start time of event in local time
           example: "2022-01-01T08:33:33Z"
       additionalProperties: false
-    EventResponse:
-      type: object
-      required:
-        - eventId
-      properties:
-        status:
-          type: string
-          description: Request status
-          enum:
-            - success
-        eventId:
-          type: string
-          format: uuid
-          description: Id of created event
-          example: 1b69b353-95ff-402e-9864-a5acf5bd9ddb
-      additionalProperties: false
-    DeleteResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-            - success
     StartResponse:
       type: object
       required:
