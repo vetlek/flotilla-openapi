@@ -429,7 +429,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProblemDetails"
     post:
-      operationId: postRobot
+      operationId: postEvent
       summary: Create new event
       description: "### Overview
 
