@@ -1,14 +1,13 @@
 openapi: 3.0.1
 info:
   title: Flotilla API
-  version: 0.1.0
+  version: 0.1.9
   contact:
     email: fg_robot_dev@equinor.com
   license:
     name: Eclipse 2.0
     url: https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt
-  description:
-    "The Flotilla API is an open API for monitoring robots on an Equinor\
+  description: "The Flotilla API is an open API for monitoring robots on an Equinor\
     \ asset. The API is designed and built according to Equinor's API strategy. \n\
     \nThe API is documented in OpenAPI 3.0 format and follows REST principles. \n\n\
     The principles of API evolution is followed for updating and depreciation of endpoints.\n"
@@ -16,157 +15,177 @@ externalDocs:
   description: API documentation
   url: https://equinor.github.io/api-first-workbench
 tags:
-  - name: Robots
-    description: "Robots represent all robots on asset
+- name: Robots
+  description: 'Robots represent all robots on asset
 
-      "
-  - name: Missions
-    description:
-      "Missions represent all available missions that can be started/scheduled
-      on asset
+    '
+- name: Missions
+  description: 'Missions represent all available missions that can be started/scheduled
+    on asset
 
-      "
-  - name: Events
-    description:
-      "Events represent all events on asset
+    '
+- name: Events
+  description: 'Events represent all events on asset
 
-      "
-  - name: Reports
-    description:
-      "Reports represent the history of completed and active missions on
-      asset
+    '
+- name: Reports
+  description: 'Reports represent the history of completed and active missions on
+    asset
 
-      "
-  - name: Maps
-    description:
-      "Maps represents 2D-maps used to visualize pose of robot on asset
+    '
+- name: Maps
+  description: 'Maps represents 2D-maps used to visualize pose of robot on asset
 
-      "
+    '
 paths:
   /robots:
     get:
       operationId: getRobots
       summary: List all robots on the asset.
-      description: "### Overview
+      description: '### Overview
 
         List all robots on the asset
 
-        "
+        '
       security:
-        - OAuth2:
-            - read
-            - write
+      - OAuth2:
+        - read
+        - write
       tags:
-        - Robots
+      - Robots
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Robot"
+                  $ref: '#/components/schemas/Robot'
           description: Request successful
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         default:
-          description: Unexpected error
+          $ref: '#/components/responses/Unexpected'
+    post:
+      operationId: postRobot
+      summary: Create a new robot
+      description: '### Overview
+
+        Create a new robot entry in the database.
+
+
+        The robot will be added as an active robot and will be included in the frontend.
+
+        '
+      tags:
+      - Robots
+      security:
+      - OAuth2:
+        - write
+      requestBody:
+        description: Robot details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Robot'
+            examples:
+              createRobot:
+                $ref: '#/components/examples/createRobot'
+      responses:
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProblemDetails"
+                $ref: '#/components/schemas/CreateRobotResponse'
+          description: Succesfully added robot to database
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        default:
+          $ref: '#/components/responses/Unexpected'
   /robots/{robot_id}:
     get:
       operationId: getRobotById
       summary: Lookup robot by specified id.
-      description: "### Overview
+      description: '### Overview
 
         Lookup robot by specified id.
 
-        "
+        '
       tags:
-        - Robots
+      - Robots
       security:
-        - OAuth2:
-            - read
-            - write
+      - OAuth2:
+        - read
+        - write
       parameters:
-        - in: path
-          name: robot_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 21
+      - in: path
+        name: robot_id
+        required: true
+        schema:
+          type: integer
+          format: int32
+          example: 21
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Robot"
+                $ref: '#/components/schemas/Robot'
           description: Request successful and robot returned
-        "404":
-          description: No robot with given id exist
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
   /robots/{robot_id}/streaming:
     get:
       operationId: getRobotStream
       summary: Lookup information for streaming of real time data from robot
-      description:
-        "### Overview\nLookup information of real-time data streaming.\
+      description: "### Overview\nLookup information of real-time data streaming.\
         \ \n\nDescribes the protocol used for distributing real time data and neccesary\
         \ information for connecting to the information sources.\n"
       tags:
-        - Robots
+      - Robots
       security:
-        - OAuth2:
-            - read
-            - write
+      - OAuth2:
+        - read
+        - write
       parameters:
-        - in: path
-          name: robot_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 21
+      - in: path
+        name: robot_id
+        required: true
+        schema:
+          type: integer
+          format: int32
+          example: 21
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Stream"
+                $ref: '#/components/schemas/Stream'
           description: Request successful
-        "404":
-          description: Not found - No robot with id exist
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
   /robots/{robot_id}/schedule:
     get:
       operationId: getRobotSchedule
       summary: Lookup the schedule for the robot
-      description: "### Overview
+      description: '### Overview
 
         Get the current schedule of a robot. The schedule is a list of time entries
         where the robot is scheduled to perform a certain mission.
@@ -176,262 +195,271 @@ paths:
         specified in the query. If none is provided, the default start time is current
         time and default end time is start time + one week.
 
-        "
+        '
       tags:
-        - Robots
+      - Robots
       security:
-        - OAuth2:
-            - read
-            - write
+      - OAuth2:
+        - read
+        - write
       parameters:
-        - in: path
-          name: robot_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 21
-        - in: query
-          name: startTime
-          schema:
-            type: string
-            format: date-time
-            description: Earliest start time for scheduled missions
-          required: false
-        - in: query
-          name: endTime
-          schema:
-            type: string
-            format: date-time
-            description: Latest end time for scheduled missions
-          required: false
+      - in: path
+        name: robot_id
+        required: true
+        schema:
+          type: integer
+          format: int32
+          example: 21
+      - in: query
+        name: startTime
+        schema:
+          type: string
+          format: date-time
+          description: Earliest start time for scheduled missions
+        required: false
+      - in: query
+        name: endTime
+        schema:
+          type: string
+          format: date-time
+          description: Latest end time for scheduled missions
+        required: false
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Schedule"
+                $ref: '#/components/schemas/Schedule'
           description: Request successful
-        "404":
-          description: Not found - No robot with id exist
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
- 
+          $ref: '#/components/responses/Unexpected'
   /robots/{robot_id}/start/{mission_id}:
     post:
       operationId: postStartRobot
       summary: Start a mission with robot
-      description: "### Overview
+      description: '### Overview
 
         Start a mission with given id using robot with robot id.
 
-        "
+        '
       tags:
-        - Robots
+      - Robots
       security:
-        - OAuth2:
-            - write
+      - OAuth2:
+        - write
       parameters:
-        - in: path
-          name: robot_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 21
-        - in: path
-          name: mission_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 287
+      - in: path
+        name: robot_id
+        required: true
+        schema:
+          type: integer
+          format: int32
+          example: 21
+      - in: path
+        name: mission_id
+        required: true
+        schema:
+          type: integer
+          format: int32
+          example: 287
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StartResponse"
+                $ref: '#/components/schemas/StartResponse'
           description: Mission succesfully started
-        "403":
-          description: Failed to start - Client is not authorized to start mission
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
-        "409":
-          description: Failed to start - Conflict with the robot schedule
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
   /robots/{robot_id}/stop:
     post:
       operationId: postStopRobot
       summary: Stop robot
-      description:
-        "### Overview\nStop the execution of the current active mission.\
-        \ \n\nIf there is no active mission on robot, nothing happens.\n"
+      description: '### Overview
+
+        Stop the execution of the current active mission.
+
+
+        If there is no active mission on robot, nothing happens.'
       tags:
-        - Robots
+      - Robots
       security:
-        - OAuth2:
-            - write
+      - OAuth2:
+        - write
       parameters:
-        - in: path
-          name: robot_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 21
+      - in: path
+        name: robot_id
+        required: true
+        schema:
+          type: integer
+          format: int32
+          example: 21
       responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PostResponse"
-          description: Robot succesfully stopped
-        "403":
-          description: Failed to stop - Client is not authorized to stop mission
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '200':
+          $ref: '#/components/responses/Success'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
+  /robots/{robot_id}/enable:
+    post:
+      operationId: postEnableRobot
+      summary: Enable or disable an existing robot
+      description: '### Overview
+
+        Enable or disable an existing robot.
+
+
+        Being enabled implies that the robot is available in operation and will be
+        visible to users in Flotilla.
+
+        '
+      tags:
+      - Robots
+      security:
+      - OAuth2:
+        - write
+      parameters:
+      - in: path
+        name: robot_id
+        required: true
+        schema:
+          type: integer
+          format: int32
+          example: 21
+      - in: query
+        name: enable
+        schema:
+          type: boolean
+          description: To enable or disable the robot
+        required: false
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Unexpected'
   /missions:
     get:
       operationId: getMissions
       summary: List all available missions on the asset
-      description: "### Overview
+      description: '### Overview
 
         List all available missions on the asset in the Echo mission planner
 
-        "
+        '
       tags:
-        - Missions
+      - Missions
       security:
-        - OAuth2:
-            - read
-            - write
+      - OAuth2:
+        - read
+        - write
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Mission"
+                  $ref: '#/components/schemas/Mission'
           description: Request successful
-        "404":
-          description: Not found - No missions available on the asset
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
   /missions/{mission_id}:
     get:
       operationId: getMissionById
       summary: Lookup mission by specified id
-      description: "### Overview
+      description: '### Overview
 
         Lookup mission by specified id
 
-        "
+        '
       tags:
-        - Missions
+      - Missions
       security:
-        - OAuth2:
-            - read
-            - write
+      - OAuth2:
+        - read
+        - write
       parameters:
-        - in: path
-          name: mission_id
-          required: true
-          schema:
-            type: integer
-            example: 271
+      - in: path
+        name: mission_id
+        required: true
+        schema:
+          type: integer
+          example: 271
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Mission"
+                $ref: '#/components/schemas/Mission'
           description: Request successful
-        "404":
-          description: Not found - The requested mission object does not exist
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
   /events:
     get:
       operationId: getEvent
       summary: Lookup events
-      description: "### Overview
+      description: '### Overview
 
         Lookup events
 
-        "
+        '
       tags:
-        - Events
+      - Events
       security:
-        - OAuth2:
-            - write
+      - OAuth2:
+        - write
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Event"
+                $ref: '#/components/schemas/Event'
           description: Request successful
-        "403":
-          description: Forbidden - Client not authorized to add events
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
     post:
       operationId: postEvent
       summary: Create new event
-      description: "### Overview
+      description: '### Overview
 
         Adds a new event to the robot schedule
 
@@ -439,309 +467,342 @@ paths:
         New entries to the schedule can be added as long as they do not conflict with
         already scheduled events.
 
-        "
+        '
       tags:
-        - Events
+      - Events
       security:
-        - OAuth2:
-            - write
+      - OAuth2:
+        - write
       requestBody:
         description: Time entry update
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/EventRequest"
+              $ref: '#/components/schemas/EventRequest'
             examples:
               scheduleEvent:
-                $ref: "#/components/examples/scheduleEvent"
+                $ref: '#/components/examples/scheduleEvent'
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Event"
-          description: Request successful
-        "403":
-          description: Forbidden - Client not authorized to add events
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+                $ref: '#/components/schemas/Event'
+          description: Created
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
   /events/{event_id}:
     delete:
       operationId: deleteEventById
       summary: Remove a specified event
-      description: "### Overview
+      description: '### Overview
 
         Deletes an event from the robot schedule.
 
 
         Can only be used for events that have not started yet.
 
-        "
+        '
       tags:
-        - Events
+      - Events
       security:
-        - OAuth2:
-            - write
+      - OAuth2:
+        - write
       parameters:
-        - in: path
-          name: event_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 21
+      - in: path
+        name: event_id
+        required: true
+        schema:
+          type: integer
+          format: int32
+          example: 21
       responses:
-        "204":
+        '204':
           description: Event successfully deleted
-        "403":
-          description: Forbidden - Client not authorized to delete events
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
     get:
       operationId: getEventById
       summary: Lookup event with specified id
-      description: "### Overview
+      description: '### Overview
 
         Lookup event with specified id.
 
 
         Can only be used for events that have not started yet.
 
-        "
+        '
       tags:
-        - Events
+      - Events
       security:
-        - OAuth2:
-            - write
+      - OAuth2:
+        - write
       parameters:
-        - in: path
-          name: event_id
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 102
+      - in: path
+        name: event_id
+        required: true
+        schema:
+          type: integer
+          format: int32
+          example: 102
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Event"
+                $ref: '#/components/schemas/Event'
           description: Request successful
-        "403":
-          description: Forbidden - Client not authorized to delete events
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
   /map/{x_coord}/{y_coord}/{z_coord}:
     get:
       operationId: getMap
       summary: Find map based on coordinates
-      description: "### Overview
+      description: '### Overview
 
         Finds the appropriate map based on the coordinates.
 
-        "
+        '
       tags:
-        - Maps
+      - Maps
       security:
-        - OAuth2:
-            - read
-            - write
+      - OAuth2:
+        - read
+        - write
       parameters:
-        - in: path
-          name: x_coord
-          required: true
-          schema:
-            type: number
-            format: float
-            example: 221.5
-        - in: path
-          name: y_coord
-          required: true
-          schema:
-            type: number
-            format: float
-            example: 537.5
-        - in: path
-          name: z_coord
-          required: true
-          schema:
-            type: number
-            format: float
-            example: 2.3
+      - in: path
+        name: x_coord
+        required: true
+        schema:
+          type: number
+          format: float
+          example: 221.5
+      - in: path
+        name: y_coord
+        required: true
+        schema:
+          type: number
+          format: float
+          example: 537.5
+      - in: path
+        name: z_coord
+        required: true
+        schema:
+          type: number
+          format: float
+          example: 2.3
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Map"
+                $ref: '#/components/schemas/Map'
           description: Request successful
-        "404":
-          description: Not found - No map obejcts exist
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
   /reports:
     get:
       operationId: getReports
       summary: List all available reports on the asset
-      description: "### Overview
+      description: '### Overview
 
         List all available reports on the asset.
 
-        "
+        '
       tags:
-        - Reports
+      - Reports
       security:
-        - OAuth2:
-            - read
-            - write
+      - OAuth2:
+        - read
+        - write
       parameters:
-        - in: query
-          name: startTime
-          schema:
-            type: string
-            format: date-time
-            description: Earliest start time for returned reports
-          required: false
-        - in: query
-          name: endTime
-          schema:
-            type: string
-            format: date-time
-            description: Latest end time for returned reports
-          required: false
-        - in: query
-          name: status
-          schema:
-            type: string
-            description: Status for mission
-            enum:
-              - completed
-              - active
-              - aborted
-          required: false
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            format: int32
-            description: Maximum number of returned reports
-          required: false
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            format: int32
-            description: Starting index of returned reports
-          required: false
+      - in: query
+        name: startTime
+        schema:
+          type: string
+          format: date-time
+          description: Earliest start time for returned reports
+        required: false
+      - in: query
+        name: endTime
+        schema:
+          type: string
+          format: date-time
+          description: Latest end time for returned reports
+        required: false
+      - in: query
+        name: status
+        schema:
+          type: string
+          description: Status for mission
+          enum:
+          - completed
+          - active
+          - aborted
+        required: false
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          format: int32
+          description: Maximum number of returned reports
+        required: false
+      - in: query
+        name: offset
+        schema:
+          type: integer
+          format: int32
+          description: Starting index of returned reports
+        required: false
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Report"
-          description: Request successful
-        "404":
-          description: Not found - No reports exist
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+                  $ref: '#/components/schemas/Report'
+          description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
   /reports/{report_id}:
     get:
       operationId: getReportById
       summary: Lookup report by id
-      description: "### Overview
+      description: '### Overview
 
         Lookup report by id
 
-        "
+        '
       tags:
-        - Reports
+      - Reports
       security:
-        - OAuth2:
-            - read
-            - write
+      - OAuth2:
+        - read
+        - write
       parameters:
-        - in: path
-          name: report_id
-          required: true
-          schema:
-            type: integer
-            example: 212
+      - in: path
+        name: report_id
+        required: true
+        schema:
+          type: integer
+          example: 212
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Report"
-          description: Request successful
-        "404":
-          description: Not found - Report does not exist
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+                $ref: '#/components/schemas/Report'
+          description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ProblemDetails"
+          $ref: '#/components/responses/Unexpected'
 components:
+  responses:
+    Success:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Success'
+          example:
+            detail: Success
+    Created:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Success'
+          example:
+            detail: The requested resource was created
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            detail: The requested resource was not found
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            detail: The application was unable to authenticate the client
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            detail: The client was authenticated but not authorized to perform this
+              action
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            detail: There was a conflict with an existing resource
+    Unexpected:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            detail: An unexpected error occurred while processing the request
   parameters:
     apiVersion:
       name: api-version
       in: query
       required: true
-      description:
-        api-version must be present in all request as part of the query
+      description: api-version must be present in all request as part of the query
         string
       schema:
         type: string
         enum:
-          - v1
+        - v1
   securitySchemes:
     OAuth2:
       type: oauth2
@@ -756,11 +817,15 @@ components:
     Robot:
       type: object
       required:
-        - id
-        - name
-        - model
-        - status
-        - capabilities
+      - id
+      - name
+      - model
+      - serial_number
+      - status
+      - host
+      - port
+      - enabled
+      - capabilities
       properties:
         id:
           type: integer
@@ -775,30 +840,47 @@ components:
           type: string
           description: Model of robot
           example: Turtlebot
+        serial_number:
+          type: string
+          description: Serial number of the robot
+          example: CE0460ROBOT
+        host:
+          type: string
+          description: Host address where the robot ISAR instance is reachable
+          example: localhost
+        port:
+          type: integer
+          format: int32
+          description: Port on the host in which the robot ISAR instance is reachable
+          example: 3000
+        enabled:
+          type: boolean
+          description: Wheter the robot is enabled and available for scheduling missions
+          example: true
         status:
           type: string
           description: Status of robot
           enum:
-            - available
-            - offline
-            - mission_in_progress
+          - available
+          - offline
+          - mission_in_progress
         capabilities:
           type: array
           items:
             type: string
             description: Valid inspection types
             enum:
-              - thermal_image
-              - image
-              - audio
+            - thermal_image
+            - image
+            - audio
       additionalProperties: false
     Mission:
       type: object
       required:
-        - id
-        - name
-        - link
-        - tags
+      - id
+      - name
+      - link
+      - tags
       properties:
         id:
           type: integer
@@ -817,18 +899,18 @@ components:
         tags:
           type: array
           items:
-            $ref: "#/components/schemas/Tag"
+            $ref: '#/components/schemas/Tag'
       additionalProperties: false
     Report:
       type: object
       required:
-        - id
-        - startTime
-        - endTime
-        - robotId
-        - missionId
-        - status
-        - entries
+      - id
+      - startTime
+      - endTime
+      - robotId
+      - missionId
+      - status
+      - entries
       properties:
         id:
           type: integer
@@ -839,12 +921,12 @@ components:
           type: string
           format: date-time
           description: Start time of mission
-          example: "2022-01-12T10:33:33Z"
+          example: '2022-01-12T10:33:33Z'
         endTime:
           type: string
           format: date-time
           description: End time of mission
-          example: "2022-01-12T10:33:33Z"
+          example: '2022-01-12T10:33:33Z'
           nullable: true
         robotId:
           type: integer
@@ -860,20 +942,20 @@ components:
           type: string
           description: Status for mission
           enum:
-            - completed
-            - active
-            - aborted
+          - completed
+          - active
+          - aborted
         entries:
           type: array
           items:
-            $ref: "#/components/schemas/ReportEntry"
+            $ref: '#/components/schemas/ReportEntry'
       additionalProperties: false
     Map:
       type: object
       required:
-        - id
-        - data
-        - coordinates
+      - id
+      - data
+      - coordinates
       properties:
         id:
           type: integer
@@ -886,13 +968,13 @@ components:
           description: Byte representation of image of 2D Map
           example: b4345xbnf32b...
         coordinates:
-          $ref: "#/components/schemas/Coordinates"
+          $ref: '#/components/schemas/Coordinates'
       additionalProperties: false
     Tag:
       type: object
       required:
-        - tagId
-        - inspectionTypes
+      - tagId
+      - inspectionTypes
       properties:
         tagId:
           type: string
@@ -908,18 +990,18 @@ components:
             type: string
             description: Valid inspection types
             enum:
-              - thermal_image
-              - image
-              - audio
+            - thermal_image
+            - image
+            - audio
       additionalProperties: false
     ReportEntry:
       type: object
       required:
-        - id
-        - tagId
-        - status
-        - inspectionType
-        - time
+      - id
+      - tagId
+      - status
+      - inspectionType
+      - time
       properties:
         id:
           type: integer
@@ -934,20 +1016,20 @@ components:
           type: string
           description: Status for inspection of tag
           enum:
-            - completed
-            - failed
+          - completed
+          - failed
         inspectionType:
           type: string
           description: Valid inspection types
           enum:
-            - thermal_image
-            - image
-            - audio
+          - thermal_image
+          - image
+          - audio
         time:
           type: string
           format: date-time
           description: Time Stamp of inspection
-          example: "2022-01-12T10:33:33Z"
+          example: '2022-01-12T10:33:33Z'
         link:
           type: string
           format: uri
@@ -957,11 +1039,11 @@ components:
     Coordinates:
       type: object
       required:
-        - referenceSystem
-        - xMin
-        - xMax
-        - yMin
-        - yMax
+      - referenceSystem
+      - xMin
+      - xMax
+      - yMin
+      - yMax
       properties:
         referenceSystem:
           type: string
@@ -990,16 +1072,16 @@ components:
     Stream:
       type: object
       required:
-        - protocol
-        - host
-        - port
-        - topics
+      - protocol
+      - host
+      - port
+      - topics
       properties:
         protocol:
           type: string
           description: Protocol used for streaming real time data
           enum:
-            - MQTT
+          - MQTT
         host:
           type: string
           format: ipv4
@@ -1008,17 +1090,17 @@ components:
         port:
           type: string
           description: Port number used
-          example: "1888"
+          example: '1888'
         topics:
           type: array
           items:
-            $ref: "#/components/schemas/Topic"
+            $ref: '#/components/schemas/Topic'
       additionalProperties: false
     Topic:
       type: object
       required:
-        - path
-        - resource
+      - path
+      - resource
       properties:
         path:
           type: string
@@ -1026,16 +1108,16 @@ components:
         resource:
           type: string
           enum:
-            - battery
-            - pose
+          - battery
+          - pose
       additionalProperties: false
     Schedule:
       type: object
       required:
-        - robotId
-        - startDate
-        - endDate
-        - events
+      - robotId
+      - startDate
+      - endDate
+      - events
       properties:
         robotId:
           type: integer
@@ -1046,25 +1128,25 @@ components:
           type: string
           format: date
           description: Start date for schedule
-          example: "2022-01-12"
+          example: '2022-01-12'
         endDate:
           type: string
           format: date
           description: End date for schedule
-          example: "2022-01-19"
+          example: '2022-01-19'
         events:
           type: array
           items:
-            $ref: "#/components/schemas/Event"
+            $ref: '#/components/schemas/Event'
       additionalProperties: false
     Event:
       type: object
       required:
-        - id
-        - robotId
-        - missionId
-        - startTime
-        - endTime
+      - id
+      - robotId
+      - missionId
+      - startTime
+      - endTime
       properties:
         id:
           type: integer
@@ -1091,35 +1173,12 @@ components:
           type: string
           format: date-time
           description: Start time for scheduled mission in local time
-          example: "2022-01-12T10:33:33Z"
+          example: '2022-01-12T10:33:33Z'
         endTime:
           type: string
           format: date-time
           description: Expected end time for scheduled mission in local time
-          example: "2022-01-13T10:33:33Z"
-      additionalProperties: false
-    ProblemDetails:
-      type: object
-      properties:
-        title:
-          type: string
-          description: Description of error
-          example: One or more validation errors occurred.
-          nullable: true
-        status:
-          type: integer
-          description: HTTP status code
-          example: 400
-          format: int32
-          nullable: true
-        errors:
-          type: object
-          description: Detailed information about error
-          additionalProperties:
-            type: object
-            additionalProperties: false
-          nullable: true
-          readOnly: true
+          example: '2022-01-13T10:33:33Z'
       additionalProperties: false
     PostResponse:
       type: object
@@ -1127,13 +1186,21 @@ components:
         status:
           type: string
           enum:
-            - success
+          - success
+    CreateRobotResponse:
+      type: object
+      properties:
+        robot_id:
+          type: integer
+          description: Id of the robot added to the database
+          example: 1
+          format: int32
     EventRequest:
       type: object
       required:
-        - robotId
-        - missionId
-        - startTime
+      - robotId
+      - missionId
+      - startTime
       properties:
         robotId:
           type: integer
@@ -1149,34 +1216,58 @@ components:
           type: string
           format: date-time
           description: Start time of event in local time
-          example: "2022-01-01T08:33:33Z"
+          example: '2022-01-01T08:33:33Z'
       additionalProperties: false
     StartResponse:
       type: object
       required:
-        - reportId
+      - reportId
       properties:
         status:
           type: string
           description: Request status
           enum:
-            - success
+          - success
         reportId:
           type: integer
           format: int32
           description: Id of created report
           example: 1
       additionalProperties: false
+    Error:
+      type: object
+      properties:
+        detail:
+          type: string
+    Success:
+      type: object
+      properties:
+        detail:
+          type: string
   examples:
     scheduleEvent:
       summary: Add new event to robot schedule
       value:
         robotId: 1
         missionId: 287
-        startTime: "2022-01-12T10:33:33Z"
+        startTime: '2022-01-12T10:33:33Z'
     start:
       summary: Start mission
       value: {}
     stop:
       summary: Stop robot
       value: {}
+    createRobot:
+      summary: Create new robot in database
+      value:
+        name: Terminator
+        model: Turtlebot
+        serial_number: CE0460ROBOT
+        host: localhost
+        port: 3000
+        enabled: true
+        status: available
+        capabilities:
+        - image
+        - thermal_image
+        - audio
