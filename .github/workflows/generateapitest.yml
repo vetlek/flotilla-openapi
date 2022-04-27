@@ -23,6 +23,15 @@ jobs:
         run: |
           sh generate-openapi.sh
           sudo chown -R runner:docker openapi
+      - name: Generate MQTT Models
+        run: |
+          sh generate-mqtt.sh
+          sudo chown -R runner:docker mqtt-output
+          python asyncapi_generator_cleaning.py --dir mqtt-output
+      - name: Move MQTT files into Flotilla package
+        run: |
+          mkdir ./openapi/src/flotilla_mqtt
+          mv ./mqtt-output/* ./openapi/src/flotilla_mqtt/
       - name: Build
         run: |
           python -m build ./openapi --outdir ./build
